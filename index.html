@@ -1,0 +1,1642 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ImportTrack — Suivi des demandes d'importation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0A0E1A;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --border: #1f2d45;
+    --accent: #3B82F6;
+    --accent2: #6366F1;
+    --success: #10B981;
+    --warning: #F59E0B;
+    --danger: #EF4444;
+    --text: #F1F5F9;
+    --muted: #64748B;
+    --muted2: #94A3B8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    font-size: 14px;
+  }
+
+  /* TOPBAR */
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: -0.5px;
+  }
+  .logo span { color: var(--accent); }
+
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+
+  #user-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--muted2);
+  }
+
+  .avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    color: white;
+  }
+
+  /* LAYOUT */
+  .layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    min-height: calc(100vh - 60px);
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 20px 0;
+    position: sticky;
+    top: 60px;
+    height: calc(100vh - 60px);
+    overflow-y: auto;
+  }
+
+  .sidebar-section {
+    padding: 0 16px 20px;
+  }
+
+  .sidebar-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0 8px 10px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--muted2);
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.15s;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+  }
+
+  .nav-item:hover { background: var(--surface2); color: var(--text); }
+  .nav-item.active { background: rgba(59,130,246,0.15); color: var(--accent); }
+
+  .nav-item .badge {
+    margin-left: auto;
+    background: var(--danger);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 10px;
+    min-width: 18px;
+    text-align: center;
+  }
+  .nav-item .badge.warn { background: var(--warning); color: #000; }
+  .nav-item .badge.ok { background: var(--success); }
+
+  .divider { height: 1px; background: var(--border); margin: 8px 16px 16px; }
+
+  /* MAIN */
+  .main { padding: 28px 32px; overflow-y: auto; }
+
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* PAGE HEADER */
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+
+  .page-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+  }
+
+  .page-sub { color: var(--muted); font-size: 13px; margin-top: 2px; }
+
+  /* STATS ROW */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+  }
+
+  .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; font-weight: 600; }
+  .stat-value { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; margin-top: 6px; }
+  .stat-value.red { color: var(--danger); }
+  .stat-value.yellow { color: var(--warning); }
+  .stat-value.green { color: var(--success); }
+  .stat-value.blue { color: var(--accent); }
+
+  /* ALERTS */
+  .alerts-section { margin-bottom: 24px; }
+
+  .alert-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: rgba(239,68,68,0.08);
+    border: 1px solid rgba(239,68,68,0.3);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .alert-card:hover { background: rgba(239,68,68,0.14); }
+  .alert-card.warn { background: rgba(245,158,11,0.08); border-color: rgba(245,158,11,0.3); }
+  .alert-card.warn:hover { background: rgba(245,158,11,0.14); }
+
+  .alert-icon { font-size: 20px; flex-shrink: 0; }
+  .alert-text strong { display: block; font-size: 13px; font-weight: 600; }
+  .alert-text span { font-size: 12px; color: var(--muted2); }
+  .alert-action { margin-left: auto; font-size: 12px; color: var(--accent); font-weight: 500; white-space: nowrap; }
+
+  /* TABLE */
+  .table-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .table-toolbar {
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+
+  .search-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 14px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    width: 220px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .search-box:focus { border-color: var(--accent); }
+
+  .filter-select {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  thead tr {
+    background: var(--surface2);
+  }
+
+  th {
+    padding: 11px 16px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 13px 16px;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+    vertical-align: middle;
+  }
+
+  tr:hover td { background: var(--surface2); }
+
+  .badge-carrier {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 3px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  .badge-status {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .badge-status.en-attente { background: rgba(100,116,139,0.2); color: var(--muted2); }
+  .badge-status.en-cours { background: rgba(59,130,246,0.15); color: var(--accent); }
+  .badge-status.a-verifier { background: rgba(245,158,11,0.15); color: var(--warning); }
+  .badge-status.en-retard { background: rgba(239,68,68,0.15); color: var(--danger); }
+  .badge-status.recu { background: rgba(16,185,129,0.15); color: var(--success); }
+
+  .due-date { font-size: 12px; }
+  .due-date.overdue { color: var(--danger); font-weight: 600; }
+  .due-date.today { color: var(--warning); font-weight: 600; }
+  .due-date.soon { color: var(--warning); }
+  .due-date.ok { color: var(--muted2); }
+
+  .actions-cell { display: flex; gap: 6px; align-items: center; }
+
+  .btn-icon {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    width: 30px; height: 30px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.15s;
+    color: var(--muted2);
+  }
+  .btn-icon:hover { background: var(--border); color: var(--text); }
+  .btn-icon.danger:hover { background: rgba(239,68,68,0.2); border-color: var(--danger); color: var(--danger); }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+  }
+  .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+  .empty-state p { font-size: 14px; }
+
+  /* BUTTONS */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 18px;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+  }
+  .btn-primary:hover { background: #2563eb; }
+
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted2);
+  }
+  .btn-ghost:hover { background: var(--surface2); color: var(--text); }
+
+  .btn-success {
+    background: var(--success);
+    color: white;
+  }
+  .btn-success:hover { opacity: 0.85; }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 560px;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: slideUp 0.2s ease;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .modal-header {
+    padding: 20px 24px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .modal-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+  }
+
+  .modal-close {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 20px;
+    cursor: pointer;
+    line-height: 1;
+  }
+  .modal-close:hover { color: var(--text); }
+
+  .modal-body { padding: 20px 24px 24px; }
+
+  /* FORM */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group.full { grid-column: 1/-1; }
+
+  label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted2);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  input, select, textarea {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.15s;
+    width: 100%;
+  }
+  input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+  textarea { resize: vertical; min-height: 80px; }
+
+  .form-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 20px;
+  }
+
+  /* DETAIL PANEL */
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .detail-row:last-child { border-bottom: none; }
+  .detail-key { color: var(--muted); min-width: 130px; }
+  .detail-val { text-align: right; font-weight: 500; }
+
+  .history-item {
+    display: flex;
+    gap: 12px;
+    padding: 10px 0;
+    font-size: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .history-item:last-child { border-bottom: none; }
+  .history-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-top: 4px;
+    flex-shrink: 0;
+  }
+  .history-dot.green { background: var(--success); }
+  .history-dot.yellow { background: var(--warning); }
+  .history-dot.red { background: var(--danger); }
+  .history-time { color: var(--muted); margin-top: 2px; font-size: 11px; }
+
+  /* TOAST */
+  .toast-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .toast {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 13px;
+    max-width: 300px;
+    animation: toastIn 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .toast.success { border-left-color: var(--success); }
+  .toast.warning { border-left-color: var(--warning); }
+  .toast.error { border-left-color: var(--danger); }
+
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  /* CONFIG PAGE */
+  .config-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .config-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .notif-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .notif-toggle:last-child { border-bottom: none; }
+  .notif-label strong { display: block; font-size: 13px; }
+  .notif-label span { font-size: 12px; color: var(--muted); }
+
+  .toggle {
+    width: 40px; height: 22px;
+    background: var(--border);
+    border-radius: 11px;
+    cursor: pointer;
+    position: relative;
+    transition: background 0.2s;
+    border: none;
+    flex-shrink: 0;
+  }
+  .toggle::after {
+    content: '';
+    position: absolute;
+    width: 16px; height: 16px;
+    background: white;
+    border-radius: 50%;
+    top: 3px; left: 3px;
+    transition: transform 0.2s;
+  }
+  .toggle.on { background: var(--accent); }
+  .toggle.on::after { transform: translateX(18px); }
+
+  /* Auth */
+  .auth-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: var(--bg);
+  }
+  .auth-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px;
+    width: 100%;
+    max-width: 400px;
+  }
+  .auth-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 22px;
+    margin-bottom: 8px;
+  }
+  .auth-logo span { color: var(--accent); }
+  .auth-sub { color: var(--muted); font-size: 13px; margin-bottom: 28px; }
+  .auth-tabs {
+    display: flex;
+    gap: 0;
+    background: var(--bg);
+    border-radius: 8px;
+    padding: 3px;
+    margin-bottom: 20px;
+  }
+  .auth-tab {
+    flex: 1;
+    padding: 8px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    transition: all 0.15s;
+  }
+  .auth-tab.active { background: var(--surface); color: var(--text); }
+
+  .loading-overlay {
+    position: fixed; inset: 0;
+    background: var(--bg);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .spinner {
+    width: 36px; height: 36px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Notification badge global */
+  #notif-dot {
+    width: 8px; height: 8px;
+    background: var(--danger);
+    border-radius: 50%;
+    display: none;
+    margin-left: 4px;
+  }
+
+  @media (max-width: 768px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .stats-row { grid-template-columns: 1fr 1fr; }
+    .form-grid { grid-template-columns: 1fr; }
+    .main { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div class="loading-overlay" id="loading">
+  <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:20px;">Import<span style="color:var(--accent)">Track</span></div>
+  <div class="spinner"></div>
+</div>
+
+<!-- AUTH -->
+<div class="auth-page" id="auth-page" style="display:none;">
+  <div class="auth-card">
+    <div class="auth-logo">Import<span>Track</span></div>
+    <div class="auth-sub">Suivi des demandes d'importation</div>
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">Connexion</div>
+      <div class="auth-tab" id="tab-register" onclick="switchAuthTab('register')">Créer un compte</div>
+    </div>
+    <div id="auth-form-login">
+      <div class="form-group" style="margin-bottom:14px;">
+        <label>Email</label>
+        <input type="email" id="login-email" placeholder="vous@exemple.com">
+      </div>
+      <div class="form-group" style="margin-bottom:20px;">
+        <label>Mot de passe</label>
+        <input type="password" id="login-pass" placeholder="••••••••">
+      </div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="doLogin()">
+        Se connecter
+      </button>
+    </div>
+    <div id="auth-form-register" style="display:none;">
+      <div class="form-group" style="margin-bottom:14px;">
+        <label>Prénom / Pseudo</label>
+        <input type="text" id="reg-name" placeholder="Jean">
+      </div>
+      <div class="form-group" style="margin-bottom:14px;">
+        <label>Email</label>
+        <input type="email" id="reg-email" placeholder="vous@exemple.com">
+      </div>
+      <div class="form-group" style="margin-bottom:20px;">
+        <label>Mot de passe</label>
+        <input type="password" id="reg-pass" placeholder="••••••••">
+      </div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="doRegister()">
+        Créer le compte
+      </button>
+    </div>
+    <div id="auth-error" style="color:var(--danger);font-size:12px;margin-top:12px;text-align:center;"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" style="display:none;">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="logo">Import<span>Track</span></div>
+    <div class="topbar-right">
+      <div id="notif-dot"></div>
+      <div id="user-info">
+        <div class="avatar" id="user-avatar">?</div>
+        <span id="user-name">—</span>
+      </div>
+      <button class="btn btn-ghost" style="padding:6px 12px;font-size:12px;" onclick="doLogout()">Déconnexion</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Navigation</div>
+        <button class="nav-item active" id="nav-dashboard" onclick="showPage('dashboard')">
+          📊 Tableau de bord
+        </button>
+        <button class="nav-item" id="nav-demandes" onclick="showPage('demandes')">
+          📦 Mes demandes
+          <span class="badge" id="badge-alertes" style="display:none;">0</span>
+        </button>
+        <button class="nav-item" id="nav-archives" onclick="showPage('archives')">
+          🗂 Archives
+        </button>
+      </div>
+      <div class="divider"></div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Compte</div>
+        <button class="nav-item" id="nav-config" onclick="showPage('config')">
+          ⚙️ Paramètres
+        </button>
+      </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+
+      <!-- DASHBOARD -->
+      <div class="page active" id="page-dashboard">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Tableau de bord</div>
+            <div class="page-sub" id="dash-date"></div>
+          </div>
+          <button class="btn btn-primary" onclick="openModal()">+ Nouvelle demande</button>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-label">Total actif</div>
+            <div class="stat-value blue" id="stat-total">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">⚠ À vérifier</div>
+            <div class="stat-value yellow" id="stat-verif">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">🔴 En retard</div>
+            <div class="stat-value red" id="stat-retard">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">✅ Reçus (30j)</div>
+            <div class="stat-value green" id="stat-recu">0</div>
+          </div>
+        </div>
+
+        <div class="alerts-section" id="alerts-section"></div>
+
+        <div class="table-wrap">
+          <div class="table-toolbar">
+            <span style="font-family:'Syne',sans-serif;font-weight:700;font-size:14px;">Demandes urgentes</span>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Référence</th>
+                <th>Transporteur</th>
+                <th>Description</th>
+                <th>Date vérif.</th>
+                <th>Statut</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="urgent-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- DEMANDES -->
+      <div class="page" id="page-demandes">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Toutes les demandes</div>
+            <div class="page-sub">Demandes en cours de traitement</div>
+          </div>
+          <button class="btn btn-primary" onclick="openModal()">+ Nouvelle demande</button>
+        </div>
+
+        <div class="table-wrap">
+          <div class="table-toolbar">
+            <input class="search-box" type="text" placeholder="🔍 Rechercher..." id="search-input" oninput="renderTable()">
+            <select class="filter-select" id="filter-carrier" onchange="renderTable()">
+              <option value="">Tous les transporteurs</option>
+              <option>DHL</option>
+              <option>UPS</option>
+              <option>FedEx</option>
+              <option>Chronopost</option>
+              <option>Colissimo</option>
+              <option>TNT</option>
+              <option>Autre</option>
+            </select>
+            <select class="filter-select" id="filter-status" onchange="renderTable()">
+              <option value="">Tous les statuts</option>
+              <option value="en-attente">En attente</option>
+              <option value="en-cours">En cours</option>
+              <option value="a-verifier">À vérifier</option>
+              <option value="en-retard">En retard</option>
+            </select>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Référence</th>
+                <th>Transporteur</th>
+                <th>Description</th>
+                <th>Créé par</th>
+                <th>Date vérif.</th>
+                <th>Statut</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="main-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ARCHIVES -->
+      <div class="page" id="page-archives">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Archives</div>
+            <div class="page-sub">Demandes reçues et clôturées</div>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Référence</th>
+                <th>Transporteur</th>
+                <th>Description</th>
+                <th>Créé par</th>
+                <th>Date réception</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="archive-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- CONFIG -->
+      <div class="page" id="page-config">
+        <div class="page-header">
+          <div class="page-title">Paramètres</div>
+        </div>
+
+        <div class="config-section">
+          <div class="config-title">⚙️ Configuration Supabase</div>
+          <div class="form-grid">
+            <div class="form-group full">
+              <label>URL Supabase</label>
+              <input type="text" id="cfg-url" placeholder="https://xxxx.supabase.co">
+            </div>
+            <div class="form-group full">
+              <label>Clé anonyme (anon key)</label>
+              <input type="text" id="cfg-key" placeholder="eyJhbGci...">
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-primary" onclick="saveConfig()">Sauvegarder la configuration</button>
+          </div>
+          <div id="cfg-status" style="margin-top:10px;font-size:12px;"></div>
+        </div>
+
+        <div class="config-section">
+          <div class="config-title">🔔 Notifications navigateur</div>
+          <div class="notif-toggle">
+            <div class="notif-label">
+              <strong>Notifications push</strong>
+              <span>Recevoir des alertes même sans avoir l'app ouverte</span>
+            </div>
+            <button class="toggle" id="toggle-notif" onclick="toggleNotif(this)"></button>
+          </div>
+          <div class="notif-toggle">
+            <div class="notif-label">
+              <strong>Rappel quotidien</strong>
+              <span>Résumé des demandes à vérifier chaque matin</span>
+            </div>
+            <button class="toggle" id="toggle-daily" onclick="toggleBtn(this)"></button>
+          </div>
+        </div>
+
+        <div class="config-section">
+          <div class="config-title">🗑 Zone dangereuse</div>
+          <button class="btn" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:var(--danger);" onclick="if(confirm('Déconnecter ?')) doLogout()">
+            Se déconnecter
+          </button>
+        </div>
+      </div>
+
+    </div><!-- /main -->
+  </div><!-- /layout -->
+</div><!-- /app -->
+
+<!-- MODAL NOUVELLE DEMANDE -->
+<div class="modal-overlay" id="modal-new">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">Nouvelle demande</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Référence / N° suivi *</label>
+          <input type="text" id="f-ref" placeholder="DHL-2024-XXXX">
+        </div>
+        <div class="form-group">
+          <label>Transporteur *</label>
+          <select id="f-carrier">
+            <option value="">Choisir...</option>
+            <option>DHL</option>
+            <option>UPS</option>
+            <option>FedEx</option>
+            <option>Chronopost</option>
+            <option>Colissimo</option>
+            <option>TNT</option>
+            <option>Autre</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label>Description de la marchandise *</label>
+          <input type="text" id="f-desc" placeholder="Ex : Composants électroniques, 3 colis">
+        </div>
+        <div class="form-group">
+          <label>Date de la demande</label>
+          <input type="date" id="f-date">
+        </div>
+        <div class="form-group">
+          <label>Date de vérification *</label>
+          <input type="date" id="f-verif">
+        </div>
+        <div class="form-group">
+          <label>Priorité</label>
+          <select id="f-priority">
+            <option value="normale">Normale</option>
+            <option value="haute">Haute</option>
+            <option value="urgente">Urgente</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Statut</label>
+          <select id="f-status">
+            <option value="en-attente">En attente</option>
+            <option value="en-cours">En cours</option>
+            <option value="a-verifier">À vérifier</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label>Notes / Commentaires</label>
+          <textarea id="f-notes" placeholder="Informations supplémentaires..."></textarea>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-ghost" onclick="closeModal()">Annuler</button>
+        <button class="btn btn-primary" id="modal-save-btn" onclick="saveDemande()">Créer la demande</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DETAIL -->
+<div class="modal-overlay" id="modal-detail">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="detail-title">Détail demande</div>
+      <button class="modal-close" onclick="closeDetail()">✕</button>
+    </div>
+    <div class="modal-body" id="detail-body"></div>
+  </div>
+</div>
+
+<!-- TOASTS -->
+<div class="toast-container" id="toast-container"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// ============================================================
+// CONFIG
+// ============================================================
+const STORAGE_KEY = 'importtrack_cfg';
+const DEFAULT_SUPABASE_URL = 'https://bxuwtszkmxskojgrtjfa.supabase.co';
+const DEFAULT_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ4dXd0c3prbXhza29qZ3J0amZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAzOTYxODQsImV4cCI6MjA5NTk3MjE4NH0.X8rm0OR9gC_G8nPwEZpEmqyejRrVXzA6XEa0j7wMXnk';
+let supabase = null;
+let currentUser = null;
+let allDemandes = [];
+let editId = null;
+
+// ============================================================
+// SUPABASE INIT
+// ============================================================
+function initSupabase(url, key) {
+  try {
+    supabase = window.supabase.createClient(url, key);
+    return true;
+  } catch(e) {
+    return false;
+  }
+}
+
+function loadConfig() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (!raw) return null;
+  try { return JSON.parse(raw); } catch { return null; }
+}
+
+function saveConfig() {
+  const url = document.getElementById('cfg-url').value.trim();
+  const key = document.getElementById('cfg-key').value.trim();
+  if (!url || !key) { showToast('Remplis les deux champs', 'warning'); return; }
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ url, key }));
+  initSupabase(url, key);
+  showToast('Configuration sauvegardée !', 'success');
+  document.getElementById('cfg-status').innerHTML = '<span style="color:var(--success)">✓ Config sauvegardée — reconnecte-toi</span>';
+}
+
+// ============================================================
+// AUTH
+// ============================================================
+function switchAuthTab(tab) {
+  document.getElementById('tab-login').classList.toggle('active', tab==='login');
+  document.getElementById('tab-register').classList.toggle('active', tab==='register');
+  document.getElementById('auth-form-login').style.display = tab==='login' ? '' : 'none';
+  document.getElementById('auth-form-register').style.display = tab==='register' ? '' : 'none';
+  document.getElementById('auth-error').textContent = '';
+}
+
+async function doLogin() {
+  if (!supabase) { showAuthError('Configure Supabase d\'abord dans Paramètres'); return; }
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
+  if (error) showAuthError(error.message);
+}
+
+async function doRegister() {
+  if (!supabase) { showAuthError('Configure Supabase d\'abord'); return; }
+  const name = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const pass = document.getElementById('reg-pass').value;
+  const { error } = await supabase.auth.signUp({
+    email, password: pass,
+    options: { data: { display_name: name } }
+  });
+  if (error) showAuthError(error.message);
+  else showAuthError('✓ Compte créé ! Vérifie ton email puis connecte-toi.', true);
+}
+
+function showAuthError(msg, ok=false) {
+  const el = document.getElementById('auth-error');
+  el.textContent = msg;
+  el.style.color = ok ? 'var(--success)' : 'var(--danger)';
+}
+
+async function doLogout() {
+  if (supabase) await supabase.auth.signOut();
+  currentUser = null;
+  allDemandes = [];
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('auth-page').style.display = 'flex';
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.getElementById('nav-' + name).classList.add('active');
+  if (name === 'demandes') renderTable();
+  if (name === 'archives') renderArchives();
+  if (name === 'config') loadConfigForm();
+}
+
+function loadConfigForm() {
+  const cfg = loadConfig();
+  document.getElementById('cfg-url').value = cfg?.url || DEFAULT_SUPABASE_URL;
+  document.getElementById('cfg-key').value = cfg?.key || DEFAULT_SUPABASE_KEY;
+}
+
+// ============================================================
+// DATA
+// ============================================================
+async function fetchDemandes() {
+  if (!supabase) return;
+  const { data, error } = await supabase
+    .from('demandes_import')
+    .select('*')
+    .neq('statut', 'recu')
+    .order('date_verification', { ascending: true });
+  if (!error) {
+    allDemandes = data || [];
+    updateStats();
+    renderUrgent();
+    renderAlerts();
+    updateBadges();
+    checkBrowserNotifications();
+  }
+}
+
+async function fetchArchives() {
+  if (!supabase) return [];
+  const { data } = await supabase
+    .from('demandes_import')
+    .select('*')
+    .eq('statut', 'recu')
+    .order('updated_at', { ascending: false })
+    .limit(100);
+  return data || [];
+}
+
+// ============================================================
+// STATS
+// ============================================================
+function updateStats() {
+  const today = new Date(); today.setHours(0,0,0,0);
+  let verif = 0, retard = 0;
+
+  allDemandes.forEach(d => {
+    const dv = new Date(d.date_verification); dv.setHours(0,0,0,0);
+    if (dv < today) retard++;
+    else if (dv.getTime() === today.getTime()) verif++;
+    else if (d.statut === 'a-verifier') verif++;
+  });
+
+  document.getElementById('stat-total').textContent = allDemandes.length;
+  document.getElementById('stat-verif').textContent = verif;
+  document.getElementById('stat-retard').textContent = retard;
+
+  // reçus 30j
+  supabase.from('demandes_import').select('id', { count: 'exact' })
+    .eq('statut', 'recu')
+    .gte('updated_at', new Date(Date.now() - 30*24*60*60*1000).toISOString())
+    .then(({ count }) => {
+      document.getElementById('stat-recu').textContent = count || 0;
+    });
+}
+
+// ============================================================
+// ALERTS
+// ============================================================
+function renderAlerts() {
+  const container = document.getElementById('alerts-section');
+  const today = new Date(); today.setHours(0,0,0,0);
+  const tomorrow = new Date(today); tomorrow.setDate(tomorrow.getDate() + 1);
+
+  const overdue = allDemandes.filter(d => {
+    const dv = new Date(d.date_verification); dv.setHours(0,0,0,0);
+    return dv < today;
+  });
+  const todayItems = allDemandes.filter(d => {
+    const dv = new Date(d.date_verification); dv.setHours(0,0,0,0);
+    return dv.getTime() === today.getTime();
+  });
+
+  let html = '';
+
+  overdue.forEach(d => {
+    const days = Math.floor((today - new Date(d.date_verification)) / 86400000);
+    html += `<div class="alert-card" onclick="openDetail('${d.id}')">
+      <div class="alert-icon">🔴</div>
+      <div class="alert-text">
+        <strong>${d.reference} — ${d.transporteur}</strong>
+        <span>${d.description} • En retard de ${days} jour${days>1?'s':''}</span>
+      </div>
+      <div class="alert-action">Voir →</div>
+    </div>`;
+  });
+
+  todayItems.forEach(d => {
+    html += `<div class="alert-card warn" onclick="openDetail('${d.id}')">
+      <div class="alert-icon">⚠️</div>
+      <div class="alert-text">
+        <strong>${d.reference} — ${d.transporteur}</strong>
+        <span>${d.description} • À vérifier aujourd'hui</span>
+      </div>
+      <div class="alert-action">Vérifier →</div>
+    </div>`;
+  });
+
+  container.innerHTML = html || '';
+}
+
+// ============================================================
+// TABLE URGENTE (dashboard)
+// ============================================================
+function renderUrgent() {
+  const today = new Date(); today.setHours(0,0,0,0);
+  const in3 = new Date(today); in3.setDate(in3.getDate() + 3);
+
+  const urgent = allDemandes
+    .filter(d => {
+      const dv = new Date(d.date_verification); dv.setHours(0,0,0,0);
+      return dv <= in3;
+    })
+    .slice(0, 10);
+
+  const tbody = document.getElementById('urgent-tbody');
+  if (!urgent.length) {
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="icon">✅</div><p>Aucune demande urgente. Tout est sous contrôle !</p></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = urgent.map(d => rowHTML(d, false)).join('');
+}
+
+// ============================================================
+// TABLE PRINCIPALE
+// ============================================================
+function renderTable() {
+  const search = (document.getElementById('search-input')?.value || '').toLowerCase();
+  const carrier = document.getElementById('filter-carrier')?.value || '';
+  const status = document.getElementById('filter-status')?.value || '';
+
+  let filtered = allDemandes.filter(d => {
+    const match = !search || d.reference.toLowerCase().includes(search) || d.description.toLowerCase().includes(search) || d.transporteur.toLowerCase().includes(search);
+    const matchC = !carrier || d.transporteur === carrier;
+    const matchS = !status || d.statut === status;
+    return match && matchC && matchS;
+  });
+
+  const tbody = document.getElementById('main-tbody');
+  if (!filtered.length) {
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="icon">📦</div><p>Aucune demande trouvée</p></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = filtered.map(d => rowHTML(d, true)).join('');
+}
+
+function renderArchives() {
+  fetchArchives().then(archives => {
+    const tbody = document.getElementById('archive-tbody');
+    if (!archives.length) {
+      tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="icon">🗂</div><p>Aucune archive</p></div></td></tr>`;
+      return;
+    }
+    tbody.innerHTML = archives.map(d => `
+      <tr>
+        <td><strong>${d.reference}</strong></td>
+        <td><span class="badge-carrier">${carrierEmoji(d.transporteur)} ${d.transporteur}</span></td>
+        <td>${d.description}</td>
+        <td style="color:var(--muted2)">${d.created_by_name || '—'}</td>
+        <td style="color:var(--success)">${formatDate(d.updated_at)}</td>
+        <td>
+          <div class="actions-cell">
+            <button class="btn-icon" title="Voir" onclick="openDetail('${d.id}')">👁</button>
+            <button class="btn-icon danger" title="Supprimer" onclick="deleteDemande('${d.id}')">🗑</button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+  });
+}
+
+function rowHTML(d, showCreator) {
+  const today = new Date(); today.setHours(0,0,0,0);
+  const dv = new Date(d.date_verification); dv.setHours(0,0,0,0);
+  const diff = Math.floor((dv - today) / 86400000);
+
+  let dueCls = 'ok', dueLabel = formatDate(d.date_verification);
+  if (diff < 0) { dueCls = 'overdue'; dueLabel = `⚠ Il y a ${-diff}j`; }
+  else if (diff === 0) { dueCls = 'today'; dueLabel = '🔔 Aujourd\'hui'; }
+  else if (diff <= 2) { dueCls = 'soon'; dueLabel = `Dans ${diff}j`; }
+
+  // auto-compute status display
+  let statut = d.statut;
+  if (diff < 0 && statut !== 'recu') statut = 'en-retard';
+  if (diff === 0 && statut !== 'recu') statut = 'a-verifier';
+
+  const statusLabel = { 'en-attente': 'En attente', 'en-cours': 'En cours', 'a-verifier': 'À vérifier', 'en-retard': 'En retard', 'recu': 'Reçu' };
+
+  return `<tr>
+    <td><strong>${d.reference}</strong>${d.priorite==='urgente'?' 🔥':d.priorite==='haute'?' ⬆':''}</td>
+    <td><span class="badge-carrier">${carrierEmoji(d.transporteur)} ${d.transporteur}</span></td>
+    <td>${d.description}</td>
+    ${showCreator ? `<td style="color:var(--muted2)">${d.created_by_name || '—'}</td>` : ''}
+    <td><span class="due-date ${dueCls}">${dueLabel}</span></td>
+    <td><span class="badge-status ${statut}">${statusLabel[statut]||statut}</span></td>
+    <td>
+      <div class="actions-cell">
+        <button class="btn-icon" title="Voir" onclick="openDetail('${d.id}')">👁</button>
+        <button class="btn-icon" title="Modifier" onclick="editDemande('${d.id}')">✏️</button>
+        <button class="btn-icon" title="Marquer reçu" onclick="markReceived('${d.id}')" style="color:var(--success)">✅</button>
+        <button class="btn-icon danger" title="Supprimer" onclick="deleteDemande('${d.id}')">🗑</button>
+      </div>
+    </td>
+  </tr>`;
+}
+
+function carrierEmoji(c) {
+  const map = { DHL: '🟡', UPS: '🟤', FedEx: '🟣', Chronopost: '🔵', Colissimo: '🟡', TNT: '🔴' };
+  return map[c] || '📦';
+}
+
+function formatDate(str) {
+  if (!str) return '—';
+  const d = new Date(str);
+  return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+}
+
+// ============================================================
+// MODAL NOUVELLE / EDIT
+// ============================================================
+function openModal() {
+  editId = null;
+  document.getElementById('modal-title').textContent = 'Nouvelle demande';
+  document.getElementById('modal-save-btn').textContent = 'Créer la demande';
+  document.getElementById('f-ref').value = '';
+  document.getElementById('f-carrier').value = '';
+  document.getElementById('f-desc').value = '';
+  document.getElementById('f-date').value = new Date().toISOString().slice(0,10);
+  document.getElementById('f-verif').value = '';
+  document.getElementById('f-priority').value = 'normale';
+  document.getElementById('f-status').value = 'en-attente';
+  document.getElementById('f-notes').value = '';
+  document.getElementById('modal-new').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modal-new').classList.remove('open');
+}
+
+function editDemande(id) {
+  const d = allDemandes.find(x => x.id === id);
+  if (!d) return;
+  editId = id;
+  document.getElementById('modal-title').textContent = 'Modifier la demande';
+  document.getElementById('modal-save-btn').textContent = 'Enregistrer';
+  document.getElementById('f-ref').value = d.reference;
+  document.getElementById('f-carrier').value = d.transporteur;
+  document.getElementById('f-desc').value = d.description;
+  document.getElementById('f-date').value = d.date_demande?.slice(0,10) || '';
+  document.getElementById('f-verif').value = d.date_verification?.slice(0,10) || '';
+  document.getElementById('f-priority').value = d.priorite || 'normale';
+  document.getElementById('f-status').value = d.statut || 'en-attente';
+  document.getElementById('f-notes').value = d.notes || '';
+  document.getElementById('modal-new').classList.add('open');
+}
+
+async function saveDemande() {
+  const ref = document.getElementById('f-ref').value.trim();
+  const carrier = document.getElementById('f-carrier').value;
+  const desc = document.getElementById('f-desc').value.trim();
+  const verif = document.getElementById('f-verif').value;
+  if (!ref || !carrier || !desc || !verif) { showToast('Remplis les champs obligatoires (*)','warning'); return; }
+
+  const payload = {
+    reference: ref,
+    transporteur: carrier,
+    description: desc,
+    date_demande: document.getElementById('f-date').value || null,
+    date_verification: verif,
+    priorite: document.getElementById('f-priority').value,
+    statut: document.getElementById('f-status').value,
+    notes: document.getElementById('f-notes').value.trim(),
+    created_by: currentUser?.id,
+    created_by_name: currentUser?.user_metadata?.display_name || currentUser?.email?.split('@')[0] || 'Utilisateur',
+    updated_at: new Date().toISOString()
+  };
+
+  let error;
+  if (editId) {
+    ({ error } = await supabase.from('demandes_import').update(payload).eq('id', editId));
+  } else {
+    ({ error } = await supabase.from('demandes_import').insert(payload));
+  }
+
+  if (error) { showToast('Erreur : ' + error.message, 'error'); return; }
+
+  closeModal();
+  showToast(editId ? 'Demande mise à jour !' : 'Demande créée !', 'success');
+  await fetchDemandes();
+  renderTable();
+}
+
+async function markReceived(id) {
+  const { error } = await supabase.from('demandes_import')
+    .update({ statut: 'recu', updated_at: new Date().toISOString() })
+    .eq('id', id);
+  if (error) { showToast('Erreur', 'error'); return; }
+  showToast('Marquée comme reçue ✅', 'success');
+  await fetchDemandes();
+  renderTable();
+}
+
+async function deleteDemande(id) {
+  if (!confirm('Supprimer cette demande définitivement ?')) return;
+  const { error } = await supabase.from('demandes_import').delete().eq('id', id);
+  if (error) { showToast('Erreur', 'error'); return; }
+  showToast('Supprimée', 'success');
+  await fetchDemandes();
+  renderTable();
+  renderArchives();
+}
+
+// ============================================================
+// DETAIL MODAL
+// ============================================================
+function openDetail(id) {
+  const d = allDemandes.find(x => x.id === id) || {};
+  document.getElementById('detail-title').textContent = d.reference || 'Détail';
+
+  const today = new Date(); today.setHours(0,0,0,0);
+  const dv = new Date(d.date_verification); dv.setHours(0,0,0,0);
+  const diff = Math.floor((dv - today) / 86400000);
+  let verifLabel = formatDate(d.date_verification);
+  if (diff < 0) verifLabel += ` <span style="color:var(--danger)">⚠ En retard de ${-diff} jour${-diff>1?'s':''}</span>`;
+  else if (diff === 0) verifLabel += ` <span style="color:var(--warning)">🔔 Aujourd'hui !</span>`;
+  else verifLabel += ` (dans ${diff}j)`;
+
+  const statusLabel = { 'en-attente': 'En attente', 'en-cours': 'En cours', 'a-verifier': 'À vérifier', 'en-retard': 'En retard', 'recu': '✅ Reçu' };
+
+  document.getElementById('detail-body').innerHTML = `
+    <div>
+      <div class="detail-row"><span class="detail-key">Référence</span><span class="detail-val">${d.reference}</span></div>
+      <div class="detail-row"><span class="detail-key">Transporteur</span><span class="detail-val">${carrierEmoji(d.transporteur)} ${d.transporteur}</span></div>
+      <div class="detail-row"><span class="detail-key">Description</span><span class="detail-val">${d.description}</span></div>
+      <div class="detail-row"><span class="detail-key">Date demande</span><span class="detail-val">${formatDate(d.date_demande)}</span></div>
+      <div class="detail-row"><span class="detail-key">Date vérification</span><span class="detail-val">${verifLabel}</span></div>
+      <div class="detail-row"><span class="detail-key">Priorité</span><span class="detail-val">${d.priorite || '—'}</span></div>
+      <div class="detail-row"><span class="detail-key">Statut</span><span class="detail-val">${statusLabel[d.statut] || d.statut}</span></div>
+      <div class="detail-row"><span class="detail-key">Créé par</span><span class="detail-val">${d.created_by_name || '—'}</span></div>
+      ${d.notes ? `<div class="detail-row"><span class="detail-key">Notes</span><span class="detail-val" style="text-align:right;max-width:280px;">${d.notes}</span></div>` : ''}
+    </div>
+    <div class="form-actions" style="margin-top:16px;">
+      <button class="btn btn-ghost" onclick="closeDetail(); editDemande('${d.id}')">✏️ Modifier</button>
+      ${d.statut !== 'recu' ? `<button class="btn btn-success" onclick="closeDetail(); markReceived('${d.id}')">✅ Marquer reçu</button>` : ''}
+    </div>
+  `;
+  document.getElementById('modal-detail').classList.add('open');
+}
+
+function closeDetail() {
+  document.getElementById('modal-detail').classList.remove('open');
+}
+
+// ============================================================
+// BADGES SIDEBAR
+// ============================================================
+function updateBadges() {
+  const today = new Date(); today.setHours(0,0,0,0);
+  let count = 0;
+  allDemandes.forEach(d => {
+    const dv = new Date(d.date_verification); dv.setHours(0,0,0,0);
+    if (dv <= today) count++;
+  });
+  const badge = document.getElementById('badge-alertes');
+  const dot = document.getElementById('notif-dot');
+  if (count > 0) {
+    badge.textContent = count;
+    badge.style.display = 'inline-block';
+    dot.style.display = 'inline-block';
+  } else {
+    badge.style.display = 'none';
+    dot.style.display = 'none';
+  }
+}
+
+// ============================================================
+// NOTIFICATIONS NAVIGATEUR
+// ============================================================
+async function toggleNotif(btn) {
+  if (Notification.permission === 'granted') {
+    btn.classList.toggle('on');
+    localStorage.setItem('notif_enabled', btn.classList.contains('on') ? '1' : '0');
+    return;
+  }
+  const perm = await Notification.requestPermission();
+  if (perm === 'granted') {
+    btn.classList.add('on');
+    localStorage.setItem('notif_enabled', '1');
+    showToast('Notifications activées !', 'success');
+  } else {
+    showToast('Notifications refusées par le navigateur', 'warning');
+  }
+}
+
+function toggleBtn(btn) {
+  btn.classList.toggle('on');
+}
+
+function checkBrowserNotifications() {
+  if (Notification.permission !== 'granted') return;
+  if (localStorage.getItem('notif_enabled') !== '1') return;
+
+  // On vérifie seulement une fois par session
+  if (sessionStorage.getItem('notif_sent')) return;
+  sessionStorage.setItem('notif_sent', '1');
+
+  const today = new Date(); today.setHours(0,0,0,0);
+  const urgent = allDemandes.filter(d => {
+    const dv = new Date(d.date_verification); dv.setHours(0,0,0,0);
+    return dv <= today;
+  });
+
+  if (urgent.length > 0) {
+    new Notification('ImportTrack 📦', {
+      body: `${urgent.length} demande(s) à vérifier aujourd'hui ou en retard !`,
+      icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">📦</text></svg>'
+    });
+  }
+}
+
+// ============================================================
+// TOASTS
+// ============================================================
+function showToast(msg, type = 'info') {
+  const container = document.getElementById('toast-container');
+  const icons = { success: '✅', warning: '⚠️', error: '❌', info: 'ℹ️' };
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `<span>${icons[type]||'ℹ️'}</span><span>${msg}</span>`;
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), 4000);
+}
+
+// ============================================================
+// BOOT
+// ============================================================
+async function boot() {
+  // Load config — fallback to hardcoded defaults
+  const cfg = loadConfig();
+  const url = cfg?.url || DEFAULT_SUPABASE_URL;
+  const key = cfg?.key || DEFAULT_SUPABASE_KEY;
+  initSupabase(url, key);
+
+  // Setup date
+  document.getElementById('dash-date').textContent = new Date().toLocaleDateString('fr-FR', {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+  });
+
+  // Check toggle states
+  if (localStorage.getItem('notif_enabled') === '1' && Notification.permission === 'granted') {
+    document.getElementById('toggle-notif')?.classList.add('on');
+  }
+
+  if (!supabase) {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('auth-page').style.display = 'flex';
+    showToast('Erreur de connexion Supabase', 'error');
+    return;
+  }
+
+  // Auth state
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session?.user) {
+    await onLogin(session.user);
+  } else {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('auth-page').style.display = 'flex';
+  }
+
+  supabase.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'SIGNED_IN' && session?.user) {
+      await onLogin(session.user);
+    }
+    if (event === 'SIGNED_OUT') {
+      document.getElementById('app').style.display = 'none';
+      document.getElementById('auth-page').style.display = 'flex';
+    }
+  });
+}
+
+async function onLogin(user) {
+  currentUser = user;
+  const name = user.user_metadata?.display_name || user.email?.split('@')[0] || 'User';
+  document.getElementById('user-name').textContent = name;
+  document.getElementById('user-avatar').textContent = name.charAt(0).toUpperCase();
+
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('auth-page').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+
+  await fetchDemandes();
+
+  // Realtime subscription
+  supabase.channel('demandes_changes')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'demandes_import' }, async () => {
+      await fetchDemandes();
+      renderTable();
+    })
+    .subscribe();
+}
+
+// Click outside modal
+document.getElementById('modal-new').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+document.getElementById('modal-detail').addEventListener('click', function(e) {
+  if (e.target === this) closeDetail();
+});
+
+boot();
+</script>
+</body>
+</html>
