@@ -1563,6 +1563,12 @@ function showToast(msg, type = 'info') {
 // ============================================================
 // BOOT
 // ============================================================
+function showAuth() {
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('auth-page').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+}
+
 async function boot() {
   // Load config — fallback to hardcoded defaults
   const cfg = loadConfig();
@@ -1581,30 +1587,47 @@ async function boot() {
   }
 
   if (!supabase) {
-    document.getElementById('loading').style.display = 'none';
-    document.getElementById('auth-page').style.display = 'flex';
-    showToast('Erreur de connexion Supabase', 'error');
+    showAuth();
+    showToast('Erreur Supabase', 'error');
     return;
   }
 
-  // Auth state
-  const { data: { session } } = await supabase.auth.getSession();
-  if (session?.user) {
-    await onLogin(session.user);
-  } else {
-    document.getElementById('loading').style.display = 'none';
-    document.getElementById('auth-page').style.display = 'flex';
-  }
+  // Timeout de securite — si Supabase ne repond pas en 6s, on affiche l'auth
+  const safetyTimer = setTimeout(() => {
+    console.warn('Supabase timeout');
+    showAuth();
+  }, 6000);
 
-  supabase.auth.onAuthStateChange(async (event, session) => {
-    if (event === 'SIGNED_IN' && session?.user) {
+  try {
+    // getSession() est plus fiable qu'onAuthStateChange pour le premier chargement
+    const { data: { session }, error } = await supabase.auth.getSession();
+    clearTimeout(safetyTimer);
+
+    if (error) throw error;
+
+    if (session?.user) {
       await onLogin(session.user);
+    } else {
+      showAuth();
     }
-    if (event === 'SIGNED_OUT') {
-      document.getElementById('app').style.display = 'none';
-      document.getElementById('auth-page').style.display = 'flex';
-    }
-  });
+
+    // Listener pour les changements suivants (login/logout)
+    supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && session?.user) {
+        await onLogin(session.user);
+      }
+      if (event === 'SIGNED_OUT') {
+        document.getElementById('app').style.display = 'none';
+        showAuth();
+      }
+    });
+
+  } catch(e) {
+    clearTimeout(safetyTimer);
+    console.error('Boot error:', e);
+    showAuth();
+    showToast('Erreur de connexion : ' + e.message, 'error');
+  }
 }
 
 async function onLogin(user) {
