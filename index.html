@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ImportTrack — Suivi des demandes d'importation</title>
+<meta name="description" content="Suivi des demandes d'importation — DHL, UPS, FedEx et plus">
+<meta name="theme-color" content="#2563EB">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="ImportTrack">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -729,6 +737,10 @@
         <div class="avatar" id="user-avatar">?</div>
         <span id="user-name">—</span>
       </div>
+      <button id="btn-install" class="btn btn-primary" style="padding:6px 14px;font-size:12px;display:none;" onclick="installPWA()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Installer l'app
+      </button>
       <button class="btn btn-ghost" style="padding:6px 12px;font-size:12px;" onclick="doLogout()">Déconnexion</button>
     </div>
   </div>
@@ -1698,6 +1710,40 @@ document.getElementById('modal-new').addEventListener('click', function(e) {
 document.getElementById('modal-detail').addEventListener('click', function(e) {
   if (e.target === this) closeDetail();
 });
+
+// ── PWA INSTALL ─────────────────────────────────────────────
+let deferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('btn-install').style.display = 'inline-flex';
+});
+
+window.addEventListener('appinstalled', () => {
+  deferredPrompt = null;
+  document.getElementById('btn-install').style.display = 'none';
+  showToast('Application installée !', 'success');
+});
+
+async function installPWA() {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  if (outcome === 'accepted') {
+    document.getElementById('btn-install').style.display = 'none';
+  }
+}
+
+// ── SERVICE WORKER ───────────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('SW registered:', reg.scope))
+      .catch(err => console.warn('SW error:', err));
+  });
+}
 
 if (window._supabaseCreate) {
   boot();
