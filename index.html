@@ -458,6 +458,8 @@
     width: 100%;
   }
   input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+  input[type="date"] { color-scheme: dark; cursor: pointer; }
+  input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.7) sepia(1) saturate(3) hue-rotate(190deg); cursor: pointer; }
   textarea { resize: vertical; min-height: 80px; }
 
   .form-actions {
@@ -847,7 +849,8 @@
               <tr>
                 <th>Référence</th>
                 <th>Transporteur</th>
-                <th>Description</th>
+                <th>N° commande</th>
+                <th>Fournisseur</th>
                 <th>Créé par</th>
                 <th>Date vérif.</th>
                 <th>Statut</th>
@@ -873,7 +876,8 @@
               <tr>
                 <th>Référence</th>
                 <th>Transporteur</th>
-                <th>Description</th>
+                <th>N° commande</th>
+                <th>Fournisseur</th>
                 <th>Créé par</th>
                 <th>Date réception</th>
                 <th>Actions</th>
@@ -964,9 +968,13 @@
             <option>Autre</option>
           </select>
         </div>
-        <div class="form-group full">
-          <label>Description de la marchandise *</label>
-          <input type="text" id="f-desc" placeholder="Ex : Composants électroniques, 3 colis">
+        <div class="form-group">
+          <label>N° de commande *</label>
+          <input type="text" id="f-desc" placeholder="Ex : CMD-2024-0042">
+        </div>
+        <div class="form-group">
+          <label>Nom du fournisseur *</label>
+          <input type="text" id="f-fournisseur" placeholder="Ex : Acme Industries">
         </div>
         <div class="form-group">
           <label>Date de la demande</label>
@@ -1284,7 +1292,7 @@ function renderTable() {
   const status = document.getElementById('filter-status')?.value || '';
 
   let filtered = allDemandes.filter(d => {
-    const match = !search || d.reference.toLowerCase().includes(search) || d.description.toLowerCase().includes(search) || d.transporteur.toLowerCase().includes(search);
+    const match = !search || d.reference.toLowerCase().includes(search) || d.description.toLowerCase().includes(search) || d.transporteur.toLowerCase().includes(search) || (d.fournisseur||'').toLowerCase().includes(search);
     const matchC = !carrier || d.transporteur === carrier;
     const matchS = !status || d.statut === status;
     return match && matchC && matchS;
@@ -1309,7 +1317,8 @@ function renderArchives() {
       <tr>
         <td><strong>${d.reference}</strong></td>
         <td><span class="badge-carrier">${carrierEmoji(d.transporteur)} ${d.transporteur}</span></td>
-        <td>${d.description}</td>
+        <td>${d.description || '—'}</td>
+        <td style="color:var(--muted2);font-size:12px;">${d.fournisseur || '—'}</td>
         <td style="color:var(--muted2)">${d.created_by_name || '—'}</td>
         <td style="color:var(--success)">${formatDate(d.updated_at)}</td>
         <td>
@@ -1323,6 +1332,19 @@ function renderArchives() {
   });
 }
 
+
+function trackingUrl(carrier, ref) {
+  const r = encodeURIComponent(ref);
+  const map = {
+    'DHL':        `https://www.dhl.com/fr-fr/home/tracking.html?tracking-id=${r}`,
+    'UPS':        `https://www.ups.com/track?tracknum=${r}&loc=fr_FR`,
+    'FedEx':      `https://www.fedex.com/fedextrack/?trknbr=${r}`,
+    'Chronopost': `https://www.chronopost.fr/tracking-no-cms/suivi-page?listeNumerosLt=${r}`,
+    'Colissimo':  `https://www.laposte.fr/outils/suivre-vos-envois?code=${r}`,
+    'TNT':        `https://www.tnt.com/express/fr_fr/site/outils-expedition/suivi.html?searchType=CON&cons=${r}`,
+  };
+  return map[carrier] || null;
+}
 function rowHTML(d, showCreator) {
   const today = new Date(); today.setHours(0,0,0,0);
   const dv = new Date(d.date_verification); dv.setHours(0,0,0,0);
@@ -1340,10 +1362,14 @@ function rowHTML(d, showCreator) {
 
   const statusLabel = { 'en-attente': 'En attente', 'en-cours': 'En cours', 'a-verifier': 'À vérifier', 'en-retard': 'En retard', 'recu': 'Reçu' };
 
+  const turl = trackingUrl(d.transporteur, d.reference);
+  const refLink = turl
+    ? `<a href="${turl}" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:700;" title="Suivre sur ${d.transporteur}">${d.reference} 🔗</a>`
+    : `<strong>${d.reference}</strong>`;
   return `<tr>
-    <td><strong>${d.reference}</strong>${d.priorite==='urgente'?' 🔥':d.priorite==='haute'?' ⬆':''}</td>
+    <td>${refLink}${d.priorite==='urgente'?' 🔥':d.priorite==='haute'?' ⬆':''}</td>
     <td><span class="badge-carrier">${carrierEmoji(d.transporteur)} ${d.transporteur}</span></td>
-    <td>${d.description}</td>
+    <td>${d.description || '—'}</td><td style="color:var(--muted2);font-size:12px;">${d.fournisseur || '—'}</td>
     ${showCreator ? `<td style="color:var(--muted2)">${d.created_by_name || '—'}</td>` : ''}
     <td><span class="due-date ${dueCls}">${dueLabel}</span></td>
     <td><span class="badge-status ${statut}">${statusLabel[statut]||statut}</span></td>
@@ -1379,6 +1405,7 @@ function openModal() {
   document.getElementById('f-ref').value = '';
   document.getElementById('f-carrier').value = '';
   document.getElementById('f-desc').value = '';
+  document.getElementById('f-fournisseur').value = '';
   document.getElementById('f-date').value = new Date().toISOString().slice(0,10);
   document.getElementById('f-verif').value = '';
   document.getElementById('f-priority').value = 'normale';
@@ -1400,6 +1427,7 @@ function editDemande(id) {
   document.getElementById('f-ref').value = d.reference;
   document.getElementById('f-carrier').value = d.transporteur;
   document.getElementById('f-desc').value = d.description;
+  document.getElementById('f-fournisseur').value = d.fournisseur || '';
   document.getElementById('f-date').value = d.date_demande?.slice(0,10) || '';
   document.getElementById('f-verif').value = d.date_verification?.slice(0,10) || '';
   document.getElementById('f-priority').value = d.priorite || 'normale';
@@ -1412,13 +1440,15 @@ async function saveDemande() {
   const ref = document.getElementById('f-ref').value.trim();
   const carrier = document.getElementById('f-carrier').value;
   const desc = document.getElementById('f-desc').value.trim();
+  const fournisseur = document.getElementById('f-fournisseur').value.trim();
   const verif = document.getElementById('f-verif').value;
-  if (!ref || !carrier || !desc || !verif) { showToast('Remplis les champs obligatoires (*)','warning'); return; }
+  if (!ref || !carrier || !desc || !fournisseur || !verif) { showToast('Remplis les champs obligatoires (*)','warning'); return; }
 
   const payload = {
     reference: ref,
     transporteur: carrier,
     description: desc,
+    fournisseur: fournisseur,
     date_demande: document.getElementById('f-date').value || null,
     date_verification: verif,
     priorite: document.getElementById('f-priority').value,
@@ -1483,9 +1513,10 @@ function openDetail(id) {
 
   document.getElementById('detail-body').innerHTML = `
     <div>
-      <div class="detail-row"><span class="detail-key">Référence</span><span class="detail-val">${d.reference}</span></div>
+      <div class="detail-row"><span class="detail-key">N° suivi</span><span class="detail-val">${trackingUrl(d.transporteur, d.reference) ? `<a href="${trackingUrl(d.transporteur, d.reference)}" target="_blank" style="color:var(--accent);">${d.reference} 🔗</a>` : d.reference}</span></div>
       <div class="detail-row"><span class="detail-key">Transporteur</span><span class="detail-val">${carrierEmoji(d.transporteur)} ${d.transporteur}</span></div>
-      <div class="detail-row"><span class="detail-key">Description</span><span class="detail-val">${d.description}</span></div>
+      <div class="detail-row"><span class="detail-key">N° commande</span><span class="detail-val">${d.description || '—'}</span></div>
+      <div class="detail-row"><span class="detail-key">Fournisseur</span><span class="detail-val">${d.fournisseur || '—'}</span></div>
       <div class="detail-row"><span class="detail-key">Date demande</span><span class="detail-val">${formatDate(d.date_demande)}</span></div>
       <div class="detail-row"><span class="detail-key">Date vérification</span><span class="detail-val">${verifLabel}</span></div>
       <div class="detail-row"><span class="detail-key">Priorité</span><span class="detail-val">${d.priorite || '—'}</span></div>
