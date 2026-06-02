@@ -1272,7 +1272,7 @@ function renderUrgent() {
 
   const tbody = document.getElementById('urgent-tbody');
   if (!urgent.length) {
-    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="icon" style="color:var(--success)"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.36"/><polyline points="22 4 12 36.01 9 11.01"/></svg></div><p>Aucune demande urgente. Tout est sous contrôle !</p></div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="icon" style="color:var(--success)"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg></div><p>Aucune demande urgente. Tout est sous contrôle !</p></div></td></tr>`;
     return;
   }
   tbody.innerHTML = urgent.map(d => rowHTML(d, false)).join('');
@@ -1295,7 +1295,7 @@ function renderTable() {
 
   const tbody = document.getElementById('main-tbody');
   if (!filtered.length) {
-    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="icon" style="color:var(--muted2)"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16v-2"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div><p>Aucune demande trouvée</p></div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="icon" style="color:var(--muted2)"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16v-2"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div><p>Aucune demande trouvée</p></div></td></tr>`;
     return;
   }
   tbody.innerHTML = filtered.map(d => rowHTML(d, true)).join('');
@@ -1305,7 +1305,7 @@ function renderArchives() {
   fetchArchives().then(archives => {
     const tbody = document.getElementById('archive-tbody');
     if (!archives.length) {
-      tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="icon" style="color:var(--muted2)"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5" rx="1"/><line x1="10" y1="12" x2="14" y2="12"/></svg></div><p>Aucune archive</p></div></td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="icon" style="color:var(--muted2)"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5" rx="1"/><line x1="10" y1="12" x2="14" y2="12"/></svg></div><p>Aucune archive</p></div></td></tr>`;
       return;
     }
     tbody.innerHTML = archives.map(d => `
