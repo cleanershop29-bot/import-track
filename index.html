@@ -739,21 +739,21 @@
       <div class="sidebar-section">
         <div class="sidebar-label">Navigation</div>
         <button class="nav-item active" id="nav-dashboard" onclick="showPage('dashboard')">
-          📊 Tableau de bord
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg> Tableau de bord
         </button>
         <button class="nav-item" id="nav-demandes" onclick="showPage('demandes')">
-          📦 Mes demandes
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16v-2"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg> Mes demandes
           <span class="badge" id="badge-alertes" style="display:none;">0</span>
         </button>
         <button class="nav-item" id="nav-archives" onclick="showPage('archives')">
-          🗂 Archives
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5" rx="1"/><line x1="10" y1="12" x2="14" y2="12"/></svg> Archives
         </button>
       </div>
       <div class="divider"></div>
       <div class="sidebar-section">
         <div class="sidebar-label">Compte</div>
         <button class="nav-item" id="nav-config" onclick="showPage('config')">
-          ⚙️ Paramètres
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Paramètres
         </button>
       </div>
     </div>
@@ -768,7 +768,7 @@
             <div class="page-title">Tableau de bord</div>
             <div class="page-sub" id="dash-date"></div>
           </div>
-          <button class="btn btn-primary" onclick="openModal()">+ Nouvelle demande</button>
+          <button class="btn btn-primary" onclick="openModal()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Nouvelle demande</button>
         </div>
 
         <div class="stats-row">
@@ -781,11 +781,11 @@
             <div class="stat-value yellow" id="stat-verif">0</div>
           </div>
           <div class="stat-card">
-            <div class="stat-label">🔴 En retard</div>
+            <div class="stat-label">En retard</div>
             <div class="stat-value red" id="stat-retard">0</div>
           </div>
           <div class="stat-card">
-            <div class="stat-label">✅ Reçus / Terminés (30j)</div>
+            <div class="stat-label">Reçus / Terminés (30j)</div>
             <div class="stat-value green" id="stat-recu">0</div>
           </div>
         </div>
@@ -819,12 +819,12 @@
             <div class="page-title">Toutes les demandes</div>
             <div class="page-sub">Demandes en cours de traitement</div>
           </div>
-          <button class="btn btn-primary" onclick="openModal()">+ Nouvelle demande</button>
+          <button class="btn btn-primary" onclick="openModal()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Nouvelle demande</button>
         </div>
 
         <div class="table-wrap">
           <div class="table-toolbar">
-            <input class="search-box" type="text" placeholder="🔍 Rechercher..." id="search-input" oninput="renderTable()">
+            <input class="search-box" type="text" placeholder="Rechercher..." id="search-input" oninput="renderTable()">
             <select class="filter-select" id="filter-carrier" onchange="renderTable()">
               <option value="">Tous les transporteurs</option>
               <option>DHL</option>
@@ -895,7 +895,7 @@
         </div>
 
         <div class="config-section">
-          <div class="config-title">⚙️ Configuration Supabase</div>
+          <div class="config-title"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Configuration Supabase</div>
           <div class="form-grid">
             <div class="form-group full">
               <label>URL Supabase</label>
@@ -913,7 +913,7 @@
         </div>
 
         <div class="config-section">
-          <div class="config-title">🔔 Notifications navigateur</div>
+          <div class="config-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg> Notifications navigateur</div>
           <div class="notif-toggle">
             <div class="notif-label">
               <strong>Notifications push</strong>
@@ -931,7 +931,7 @@
         </div>
 
         <div class="config-section">
-          <div class="config-title">🗑 Zone dangereuse</div>
+          <div class="config-title"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg> Zone dangereuse</div>
           <button class="btn" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:var(--danger);" onclick="if(confirm('Déconnecter ?')) doLogout()">
             Se déconnecter
           </button>
@@ -947,7 +947,7 @@
   <div class="modal">
     <div class="modal-header">
       <div class="modal-title" id="modal-title">Nouvelle demande</div>
-      <button class="modal-close" onclick="closeModal()">✕</button>
+      <button class="modal-close" onclick="closeModal()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     <div class="modal-body">
       <div class="form-grid">
@@ -1019,7 +1019,7 @@
   <div class="modal">
     <div class="modal-header">
       <div class="modal-title" id="detail-title">Détail demande</div>
-      <button class="modal-close" onclick="closeDetail()">✕</button>
+      <button class="modal-close" onclick="closeDetail()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     <div class="modal-body" id="detail-body"></div>
   </div>
@@ -1221,7 +1221,7 @@ function renderAlerts() {
   overdue.forEach(d => {
     const days = Math.floor((today - new Date(d.date_verification)) / 86400000);
     html += `<div class="alert-card" onclick="openDetail('${d.id}')">
-      <div class="alert-icon">🔴</div>
+      <div class="alert-icon" style="color:var(--danger)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
       <div class="alert-text">
         <strong>${d.reference} — ${d.transporteur}</strong>
         <span>${d.description} • En retard de ${days} jour${days>1?'s':''}</span>
@@ -1232,7 +1232,7 @@ function renderAlerts() {
 
   todayItems.forEach(d => {
     html += `<div class="alert-card warn" onclick="openDetail('${d.id}')">
-      <div class="alert-icon">⚠️</div>
+      <div class="alert-icon" style="color:var(--warning)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
       <div class="alert-text">
         <strong>${d.reference} — ${d.transporteur}</strong>
         <span>${d.description} • À vérifier aujourd'hui</span>
@@ -1260,7 +1260,7 @@ function renderUrgent() {
 
   const tbody = document.getElementById('urgent-tbody');
   if (!urgent.length) {
-    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="icon">✅</div><p>Aucune demande urgente. Tout est sous contrôle !</p></div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="icon" style="color:var(--success)"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.36"/><polyline points="22 4 12 36.01 9 11.01"/></svg></div><p>Aucune demande urgente. Tout est sous contrôle !</p></div></td></tr>`;
     return;
   }
   tbody.innerHTML = urgent.map(d => rowHTML(d, false)).join('');
@@ -1283,7 +1283,7 @@ function renderTable() {
 
   const tbody = document.getElementById('main-tbody');
   if (!filtered.length) {
-    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="icon">📦</div><p>Aucune demande trouvée</p></div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="icon" style="color:var(--muted2)"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16v-2"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div><p>Aucune demande trouvée</p></div></td></tr>`;
     return;
   }
   tbody.innerHTML = filtered.map(d => rowHTML(d, true)).join('');
@@ -1293,7 +1293,7 @@ function renderArchives() {
   fetchArchives().then(archives => {
     const tbody = document.getElementById('archive-tbody');
     if (!archives.length) {
-      tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="icon">🗂</div><p>Aucune archive</p></div></td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="icon" style="color:var(--muted2)"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5" rx="1"/><line x1="10" y1="12" x2="14" y2="12"/></svg></div><p>Aucune archive</p></div></td></tr>`;
       return;
     }
     tbody.innerHTML = archives.map(d => `
@@ -1306,8 +1306,8 @@ function renderArchives() {
         <td style="color:var(--success)">${formatDate(d.updated_at)}</td>
         <td>
           <div class="actions-cell">
-            <button class="btn-icon" title="Voir" onclick="openDetail('${d.id}')">👁</button>
-            <button class="btn-icon danger" title="Supprimer" onclick="deleteDemande('${d.id}')">🗑</button>
+            <button class="btn-icon" title="Voir" onclick="openDetail('${d.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+            <button class="btn-icon danger" title="Supprimer" onclick="deleteDemande('${d.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>
           </div>
         </td>
       </tr>
@@ -1335,7 +1335,7 @@ function rowHTML(d, showCreator) {
 
   let dueCls = 'ok', dueLabel = formatDate(d.date_verification);
   if (diff < 0) { dueCls = 'overdue'; dueLabel = `⚠ Il y a ${-diff}j`; }
-  else if (diff === 0) { dueCls = 'today'; dueLabel = '🔔 Aujourd\'hui'; }
+  else if (diff === 0) { dueCls = 'today'; dueLabel = 'Aujourd\'hui'; }
   else if (diff <= 2) { dueCls = 'soon'; dueLabel = `Dans ${diff}j`; }
 
   // auto-compute status display
@@ -1347,10 +1347,10 @@ function rowHTML(d, showCreator) {
 
   const turl = trackingUrl(d.transporteur, d.reference);
   const refLink = turl
-    ? `<a href="${turl}" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:700;" title="Suivre sur ${d.transporteur}">${d.reference} 🔗</a>`
+    ? `<a href="${turl}" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:700;" title="Suivre sur ${d.transporteur}">${d.reference} <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>`
     : `<strong>${d.reference}</strong>`;
   return `<tr>
-    <td>${refLink}${d.priorite==='urgente'?' 🔥':d.priorite==='haute'?' ⬆':''}</td>
+    <td>${refLink}${d.priorite==='urgente'?' <span style="color:var(--danger);vertical-align:middle;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 0 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></span>':d.priorite==='haute'?' <span style="color:var(--warning);vertical-align:middle;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></span>':''}</td>
     <td><span class="badge-carrier">${carrierEmoji(d.transporteur)} ${d.transporteur}</span></td>
     <td>${d.description || '—'}</td><td style="color:var(--muted2);font-size:12px;">${d.fournisseur || '—'}</td>
     ${showCreator ? `<td style="color:var(--muted2)">${d.created_by_name || '—'}</td>` : ''}
@@ -1358,18 +1358,19 @@ function rowHTML(d, showCreator) {
     <td><span class="badge-status ${statut}">${statusLabel[statut]||statut}</span></td>
     <td>
       <div class="actions-cell">
-        <button class="btn-icon" title="Voir" onclick="openDetail('${d.id}')">👁</button>
-        <button class="btn-icon" title="Modifier" onclick="editDemande('${d.id}')">✏️</button>
-        <button class="btn-icon" title="Marquer reçu" onclick="markReceived('${d.id}')" style="color:var(--success)">✅</button>
-        <button class="btn-icon danger" title="Supprimer" onclick="deleteDemande('${d.id}')">🗑</button>
+        <button class="btn-icon" title="Voir" onclick="openDetail('${d.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+        <button class="btn-icon" title="Modifier" onclick="editDemande('${d.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+        <button class="btn-icon" title="Marquer reçu" onclick="markReceived('${d.id}')" style="color:var(--success)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
+        <button class="btn-icon danger" title="Supprimer" onclick="deleteDemande('${d.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>
       </div>
     </td>
   </tr>`;
 }
 
 function carrierEmoji(c) {
-  const map = { DHL: '🟡', UPS: '🟤', FedEx: '🟣', Chronopost: '🔵', Colissimo: '🟡', TNT: '🔴' };
-  return map[c] || '📦';
+  const colors = { DHL: '#FFCC00', UPS: '#6B3E26', FedEx: '#4D148C', Chronopost: '#0066CC', Colissimo: '#FFD100', TNT: '#F90000' };
+  const col = colors[c] || '#94A3B8';
+  return `<svg width="8" height="8" viewBox="0 0 8 8" style="flex-shrink:0;"><circle cx="4" cy="4" r="4" fill="${col}"/></svg>`;
 }
 
 function formatDate(str) {
@@ -1462,7 +1463,7 @@ async function markReceived(id) {
     .update({ statut: 'recu', updated_at: new Date().toISOString() })
     .eq('id', id);
   if (error) { showToast('Erreur', 'error'); return; }
-  showToast('Marquée comme reçue ✅', 'success');
+  showToast('Marquée comme reçue', 'success');
   await fetchDemandes();
   renderTable();
 }
@@ -1489,14 +1490,14 @@ function openDetail(id) {
   const diff = Math.floor((dv - today) / 86400000);
   let verifLabel = formatDate(d.date_verification);
   if (diff < 0) verifLabel += ` <span style="color:var(--danger)">⚠ En retard de ${-diff} jour${-diff>1?'s':''}</span>`;
-  else if (diff === 0) verifLabel += ` <span style="color:var(--warning)">🔔 Aujourd'hui !</span>`;
+  else if (diff === 0) verifLabel += ` <span style="color:var(--warning)"> Aujourd'hui !</span>`;
   else verifLabel += ` (dans ${diff}j)`;
 
-  const statusLabel = { 'en-attente': 'En attente', 'en-cours': 'En cours', 'a-verifier': 'À vérifier', 'en-retard': 'En retard', 'recu': '✅ Reçu', 'termine': '✔ Terminé' };
+  const statusLabel = { 'en-attente': 'En attente', 'en-cours': 'En cours', 'a-verifier': 'À vérifier', 'en-retard': 'En retard', 'recu': 'Reçu', 'termine': 'Terminé' };
 
   document.getElementById('detail-body').innerHTML = `
     <div>
-      <div class="detail-row"><span class="detail-key">N° suivi</span><span class="detail-val">${trackingUrl(d.transporteur, d.reference) ? `<a href="${trackingUrl(d.transporteur, d.reference)}" target="_blank" style="color:var(--accent);">${d.reference} 🔗</a>` : d.reference}</span></div>
+      <div class="detail-row"><span class="detail-key">N° suivi</span><span class="detail-val">${trackingUrl(d.transporteur, d.reference) ? `<a href="${trackingUrl(d.transporteur, d.reference)}" target="_blank" style="color:var(--accent);">${d.reference} <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>` : d.reference}</span></div>
       <div class="detail-row"><span class="detail-key">Transporteur</span><span class="detail-val">${carrierEmoji(d.transporteur)} ${d.transporteur}</span></div>
       <div class="detail-row"><span class="detail-key">N° commande</span><span class="detail-val">${d.description || '—'}</span></div>
       <div class="detail-row"><span class="detail-key">Fournisseur</span><span class="detail-val">${d.fournisseur || '—'}</span></div>
@@ -1508,8 +1509,8 @@ function openDetail(id) {
       ${d.notes ? `<div class="detail-row"><span class="detail-key">Notes</span><span class="detail-val" style="text-align:right;max-width:280px;">${d.notes}</span></div>` : ''}
     </div>
     <div class="form-actions" style="margin-top:16px;">
-      <button class="btn btn-ghost" onclick="closeDetail(); editDemande('${d.id}')">✏️ Modifier</button>
-      ${d.statut !== 'recu' && d.statut !== 'termine' ? `<button class="btn btn-success" onclick="closeDetail(); markReceived('${d.id}')">✅ Marquer reçu</button>` : ''}
+      <button class="btn btn-ghost" onclick="closeDetail(); editDemande('${d.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Modifier</button>
+      ${d.statut !== 'recu' && d.statut !== 'termine' ? `<button class="btn btn-success" onclick="closeDetail(); markReceived('${d.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Marquer reçu</button>` : ''}
     </div>
   `;
   document.getElementById('modal-detail').classList.add('open');
@@ -1579,9 +1580,9 @@ function checkBrowserNotifications() {
   });
 
   if (urgent.length > 0) {
-    new Notification('ImportTrack 📦', {
+    new Notification('ImportTrack', {
       body: `${urgent.length} demande(s) à vérifier aujourd'hui ou en retard !`,
-      icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">📦</text></svg>'
+      icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none" stroke="%232563EB" stroke-width="6"><path d="M85 40V32a8 8 0 00-4-6.9L54 11a8 8 0 00-8 0L19 25.1A8 8 0 0015 32v36a8 8 0 004 6.9L46 89a8 8 0 008 0l27-15.6A8 8 0 0085 66.4V58"/><polyline points="15 27 50 48 85 27"/><line x1="50" y1="88" x2="50" y2="48"/></svg>'
     });
   }
 }
@@ -1591,7 +1592,7 @@ function checkBrowserNotifications() {
 // ============================================================
 function showToast(msg, type = 'info') {
   const container = document.getElementById('toast-container');
-  const icons = { success: '✅', warning: '⚠️', error: '❌', info: 'ℹ️' };
+  const icons = { success: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`, warning: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`, error: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`, info: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>` };
   const toast = document.createElement('div');
   toast.className = `toast ${type}`;
   toast.innerHTML = `<span>${icons[type]||'ℹ️'}</span><span>${msg}</span>`;
